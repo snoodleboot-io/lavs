@@ -4,9 +4,11 @@ from app.connections.connection_factory import ConnectionFactory
 
 
 class DatabaseManager:
+    """Manage the life-cycle of the database."""
 
     @classmethod
-    def create_table(cls):
+    def create_tables(cls):
+        """Create the tables for the database."""
 
         with ConnectionFactory().retrieve(key="duckdb") as conn:
             with open(
@@ -21,7 +23,8 @@ class DatabaseManager:
             assert "Versions" in conn.execute("SHOW ALL TABLES").fetchdf().name.values
 
     @classmethod
-    def drop_table(cls):
+    def drop_tables(cls):
+        """Drop all tables."""
         with ConnectionFactory().retrieve(key="duckdb") as conn:
             if "Versions" in conn.execute("SHOW ALL TABLES").fetchdf().name.values:
                 conn.execute(query="DROP TABLE Versions")

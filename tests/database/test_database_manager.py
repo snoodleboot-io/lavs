@@ -11,9 +11,9 @@ class TestDatabaseManager(TestCase):
         pass
 
     def test_build(self):
-        DatabaseManager().create_table()
+        DatabaseManager().create_tables()
         pass
 
     def test_delete(self):
-        DatabaseManager().create_table()
-        DatabaseManager().drop_table()
+        DatabaseManager().create_tables()
+        DatabaseManager().drop_tables()
