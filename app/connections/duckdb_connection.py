@@ -16,7 +16,9 @@ class DuckDBConnection(Connection):
         """Generates and 'yields' a live DuckDB connection."""
         connection = None
         try:
-            connection = duckdb.connect(os.path.join(root_dir(), Configuration().database_name))
+            connection = duckdb.connect(
+                os.path.join(root_dir(), Configuration().database_name)
+            )
             yield connection
         finally:
             if connection:

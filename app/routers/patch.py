@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Query
 
 from app.models.requests.application_name_model import ApplicationNameModel
-from app.models.requests.request_model import RequestModel
 from app.queries.patch_version.create_patch import CreatePatch
 from app.queries.patch_version.read_current_patch import ReadCurrentPatch
 from app.queries.patch_version.rollback_to_previous_patch_version import (
@@ -12,7 +13,7 @@ router = APIRouter(tags=["patch"], prefix="/patch")
 
 
 @router.post("/")
-async def create(data: ApplicationNameModel):
+async def create(data: Annotated[ApplicationNameModel, Query()]):
     """Create the next patch version."""
     result = await CreatePatch().execute(data=data)
 
@@ -20,7 +21,7 @@ async def create(data: ApplicationNameModel):
 
 
 @router.get("/")
-async def get(data: ApplicationNameModel):
+async def get(data: Annotated[ApplicationNameModel, Query()]):
     """Retrieve the next patch version."""
     result = await ReadCurrentPatch().execute(data=data)
 
@@ -28,7 +29,7 @@ async def get(data: ApplicationNameModel):
 
 
 @router.post("/rollback")
-async def rollback(data: ApplicationNameModel):
+async def rollback(data: Annotated[ApplicationNameModel, Query()]):
     result = await RollbackToPreviousPatchVersion().execute(data=data)
 
     return {"result": result}

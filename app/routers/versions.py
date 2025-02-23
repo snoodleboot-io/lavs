@@ -1,9 +1,14 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Query, Body
 
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
 from app.models.requests.application_name_model import ApplicationNameModel
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
 from app.queries.versions.create_version import CreateVersion
 from app.queries.versions.delete_version import DeleteVersion
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
@@ -12,29 +17,29 @@ from app.queries.versions.retrieve_version_history import RetrieveVersionHistory
 router = APIRouter(tags=["versions"], prefix="/versions")
 
 
-@router.get("/")
-async def get(data: ApplicationNameModel):
+@router.get("/", response_model=ApplicationAndVersionResponseModel)
+async def get(data: Annotated[ApplicationNameModel, Query()]):
     result = await RetrieveVersionHistory().execute(data=data)
 
-    return {"result": result}
+    return result
 
 
 @router.get("/latest")
-async def get_all(data: ApplicationNameModel):
+async def get_all(data: Annotated[ApplicationNameModel, Query()]):
     result = await RetrieveLatestVersion().execute(data=data)
 
     return {"result": result}
 
 
 @router.post("/")
-async def create(data: ApplicationAndVersionNameModel):
+async def create(data: Annotated[ApplicationAndVersionNameModel, Query()]):
     result = await CreateVersion().execute(data=data)
 
     return {"result": result}
 
 
 @router.delete("/")
-async def read_all(data: ApplicationAndVersionNameModel):
+async def read_all(data: Annotated[ApplicationAndVersionNameModel, Query()]):
     result = await DeleteVersion().execute(data=data)
 
     return {"result": result}

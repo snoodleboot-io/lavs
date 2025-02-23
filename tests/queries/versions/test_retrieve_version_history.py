@@ -1,22 +1,24 @@
 from unittest import IsolatedAsyncioTestCase
 
 from app.database.database_manager import DatabaseManager
-from app.models.requests.application_and_version_model import ApplicationAndVersionNameModel
+from app.models.requests.application_and_version_model import (
+    ApplicationAndVersionNameModel,
+)
 from app.queries.versions.create_version import CreateVersion
 from app.queries.versions.retrieve_version_history import RetrieveVersionHistory
 
 
 class TestRetrieveVersionHistory(IsolatedAsyncioTestCase):
     def setUp(self):
-        DatabaseManager.create_table()
+        DatabaseManager.create_tables()
 
     def tearDown(self):
-        DatabaseManager.drop_table()
+        DatabaseManager.drop_tables()
 
     async def test_retrieve_version_history(self):
-        data_1 = ApplicationAndVersionNameModel(product_name="test", version='1.1.1')
-        data_2 = ApplicationAndVersionNameModel(product_name="test", version='1.2.1')
-        data_3 = ApplicationAndVersionNameModel(product_name="test", version='2.1.1')
+        data_1 = ApplicationAndVersionNameModel(product_name="test", version="1.1.1")
+        data_2 = ApplicationAndVersionNameModel(product_name="test", version="1.2.1")
+        data_3 = ApplicationAndVersionNameModel(product_name="test", version="2.1.1")
 
         _ = await CreateVersion().execute(data=data_1)
         _ = await CreateVersion().execute(data=data_2)
