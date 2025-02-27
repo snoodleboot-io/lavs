@@ -7,11 +7,13 @@ from app.models.requests.application_and_version_model import (
 from app.models.respones.applciation_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
+from app.models.respones.response_model import ResponseModel
 from app.queries.versions.create_version import CreateVersion
+from app.queries.versions.delete_version import DeleteVersion
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
 
-class TestCreateVersion(IsolatedAsyncioTestCase):
+class TestDeleteVersion(IsolatedAsyncioTestCase):
     def setUp(self):
         DatabaseManager.create_tables()
 
@@ -29,6 +31,9 @@ class TestCreateVersion(IsolatedAsyncioTestCase):
                 "id": 1,
             }
         )
-        await CreateVersion().execute(data=data)
-        result = await RetrieveLatestVersion().execute(data=data)
+        result = await CreateVersion().execute(data=data)
         self.assertTrue(result == expected_result)
+        await DeleteVersion().execute(data=data)
+        result = await RetrieveLatestVersion().execute(data=data)
+        self.assertIsInstance(result, ResponseModel)
+        self.assertTrue(result == ResponseModel())

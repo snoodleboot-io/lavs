@@ -1,22 +1,20 @@
-import contextlib
-import os
-from typing import Any
-
-import duckdb
-
-from app.configurations.root_dir import root_dir
+from app.connections.connection import Connection
+from app.connections.duckdb_connection import DuckDBConnection
 
 
 class ConnectionFactory:
-    __registry = {"duckdb": lambda: duckdb.connect(os.path.join(root_dir(), "test.db"))}
+    __registry = {"duckdb": DuckDBConnection}
 
-    @contextlib.contextmanager
-    def retrieve(self, key) -> Any:
-        connection = None
-        try:
-            connection = self.__registry[key]()
-            yield connection
-        finally:
-            if connection:
-                connection.close()
-                # pass
+    def retrieve(self, key: str) -> Connection:
+        """Will find and retrieve a Connection object - not an instance.
+
+        Args:
+            key: identifier for the Connection to return.
+
+        Raises:
+            ValueError: When the key is not a valid key.
+        """
+        if self.__registry.get(key):
+            return self.__registry[key]().connection
+        else:
+            raise ValueError

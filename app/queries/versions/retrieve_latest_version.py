@@ -1,25 +1,41 @@
-import traceback
-from typing import Dict
+from typing import Dict, Any, Union
 
-import duckdb
+from app.models.requests.application_name_model import ApplicationNameModel
+from app.models.requests.request_model import RequestModel
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
+from app.models.respones.response_model import ResponseModel
+from app.queries.query import Query
 
-from app.connections.connection_factory import ConnectionFactory
-from app.utils.load_logger import load_logger
 
+class RetrieveLatestVersion(Query):
+    """Retrieve latest version of a product."""
 
-async def retrieve_latest_version(product_name: str) -> Dict:
-    logger = load_logger()
-    try:
-        with ConnectionFactory().retrieve(key="duckdb") as conn:
-            result = (
-                conn.sql(
-                    f"SELECT * FROM Versions WHERE product_name = '{product_name}' ORDER BY major DESC, minor DESC, patch DESC LIMIT 1"
-                )
-                .fetchdf()
-                .to_dict("records")
+    def __init__(self):
+        """Construct an instance of RetrieveLatestVersion."""
+        super().__init__()
+
+    async def apply(
+        self, data: ApplicationNameModel, conn: Any
+    ) -> Union[ApplicationAndVersionResponseModel, ResponseModel]:
+        """Retrieve the latest version of a product.
+
+        Args:
+            data: Product name.
+            conn: Live database connection.
+
+        Returns:
+
+        """
+        result = (
+            conn.sql(
+                f"SELECT * FROM Versions WHERE product_name = '{data.product_name}' ORDER BY major DESC, minor DESC, patch DESC LIMIT 1"
             )
-            logger.info(result)
-    except:
-        print(traceback.format_exc())
-
-    return result[0]
+            .fetchdf()
+            .to_dict("records")
+        )
+        if len(result) > 0:
+            return ApplicationAndVersionResponseModel(**result[0])
+        else:
+            return ResponseModel()

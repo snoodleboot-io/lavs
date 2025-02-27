@@ -1,38 +1,46 @@
-from typing import Any
+from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Body
 
-from app.models.crud.write_model import WriteModel
-from app.queries.versions.create_version import create_version
+from app.models.requests.application_and_version_model import (
+    ApplicationAndVersionNameModel,
+)
+from app.models.requests.application_name_model import ApplicationNameModel
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
+from app.models.respones.response_model import ResponseModel
+from app.queries.versions.create_version import CreateVersion
+from app.queries.versions.delete_version import DeleteVersion
+from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
+from app.queries.versions.retrieve_version_history import RetrieveVersionHistory
 
 router = APIRouter(tags=["versions"], prefix="/versions")
 
 
-@router.get("/")
-async def get(data: Any):
+@router.get("/", response_model=ApplicationAndVersionResponseModel)
+async def get(data: Annotated[ApplicationNameModel, Query()]):
+    result = await RetrieveVersionHistory().execute(data=data)
 
-    return {"result": ""}
-
-
-@router.get("/latest")
-async def get_all(data: Any):
-
-    return {"result": ""}
+    return result
 
 
-@router.post("/")
-async def create(data: WriteModel):
-    await create_version(
-        product_name=data.application_name,
-        major=data.major,
-        minor=data.minor,
-        patch=data.patch,
-    )
+@router.get("/latest", response_model=ApplicationAndVersionResponseModel)
+async def get_all(data: Annotated[ApplicationNameModel, Query()]):
+    result = await RetrieveLatestVersion().execute(data=data)
 
-    return {"result": data}
+    return result
 
 
-@router.delete("/")
-async def read_all(data: Any):
+@router.post("/", response_model=ApplicationAndVersionResponseModel)
+async def create(data: Annotated[ApplicationAndVersionNameModel, Query()]):
+    result = await CreateVersion().execute(data=data)
 
-    return {"result": ""}
+    return result
+
+
+@router.delete("/", response_model=ResponseModel)
+async def read_all(data: Annotated[ApplicationAndVersionNameModel, Query()]):
+    result = await DeleteVersion().execute(data=data)
+
+    return result

@@ -1,25 +1,39 @@
-import logging
-from typing import Dict
+from typing import Any
 
-import duckdb
+from app.models.requests.application_and_version_model import (
+    ApplicationAndVersionNameModel,
+)
+from app.models.requests.request_model import RequestModel
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
+from app.models.respones.response_model import ResponseModel
+from app.queries.query import Query
+from app.queries.versions.delete_version import DeleteVersion
+from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
-from app.queries.versions.retrieve_latest_version import retrieve_latest_version
 
+class RollbackToPreviousPatchVersion(Query):
+    """Rollback active version the previous version."""
 
-async def rollback_to_previous_patch_version(product_name: str) -> Dict:
-    logger = logging.getLogger()
-    conn = None
-    try:
-        conn = duckdb.connect("test.db")
+    def __init__(self):
+        """Constructs an instance of RollbackToPreviousPatchVersion."""
+        super().__init__()
+        self._latest_version_query = RetrieveLatestVersion()
+        self._delete_version_query = DeleteVersion()
 
-        latest_version_result = await retrieve_latest_version(product_name=product_name)
+    async def apply(
+        self, data: ApplicationAndVersionNameModel, conn: Any
+    ) -> ApplicationAndVersionResponseModel:
+        """Roll back patch version by deleting the current version.
 
-        conn.sql((f"DELETE FROM Versions WHERE product_name={1} and patch={1}"))
-        new_latest_version = await retrieve_latest_version(product_name=product_name)
-        logger.info(new_latest_version)
-    finally:
-        print("oops...")
-        if conn:
-            conn.close()
-
-    return new_latest_version
+        Args:
+            data: Product name and version.
+            conn: Live database connection.
+        """
+        _ = await self._latest_version_query.execute(data=data)
+        _ = await self._delete_version_query.execute(data=data)
+        previous_version: ApplicationAndVersionResponseModel = (
+            await self._latest_version_query.execute(data=data)
+        )
+        return previous_version

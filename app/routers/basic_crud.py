@@ -1,29 +1,15 @@
-from typing import Any
+from typing import Annotated, List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+
+from app.models.requests.application_name_model import ApplicationNameModel
+from app.models.respones.applciation_and_version_response_model import ApplicationAndVersionResponseModel
+from app.queries.crud.retrieve_all import RetrieveAll
 
 router = APIRouter(tags=["crud"], prefix="/crud")
 
 
-@router.post("/")
-async def create(data: Any):
-
-    return {"result": ""}
-
-
-@router.get("/")
-async def get(data: Any):
-
-    return {"result": ""}
-
-
-@router.delete("/")
-async def delete(data: Any):
-
-    return {"result": ""}
-
-
-@router.get("/read_all")
-async def read_all(data: Any):
-
-    return {"result": ""}
+@router.get("/read_all", response_model=List[ApplicationAndVersionResponseModel])
+async def read_all(data: Annotated[ApplicationNameModel, Query()]):
+    results = await RetrieveAll().execute(data=data)
+    return results

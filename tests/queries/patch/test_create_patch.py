@@ -7,6 +7,7 @@ from app.models.requests.application_and_version_model import (
 from app.models.respones.applciation_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
+from app.queries.patch_version.create_patch import CreatePatch
 from app.queries.versions.create_version import CreateVersion
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
@@ -31,4 +32,17 @@ class TestCreateVersion(IsolatedAsyncioTestCase):
         )
         await CreateVersion().execute(data=data)
         result = await RetrieveLatestVersion().execute(data=data)
+        self.assertTrue(result == expected_result)
+
+        await CreatePatch().execute(data=data)
+        result = await RetrieveLatestVersion().execute(data=data)
+        expected_result = ApplicationAndVersionResponseModel(
+            **{
+                "major": 1,
+                "minor": 1,
+                "patch": 2,
+                "product_name": "test",
+                "id": 2,
+            }
+        )
         self.assertTrue(result == expected_result)

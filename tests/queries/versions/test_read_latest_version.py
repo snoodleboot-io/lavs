@@ -1,27 +1,32 @@
 from unittest import IsolatedAsyncioTestCase
 
 from app.database.database_manager import DatabaseManager
-from app.queries.versions.create_version import create_version
+from app.models.requests.application_and_version_model import (
+    ApplicationAndVersionNameModel,
+)
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
+from app.queries.versions.create_version import CreateVersion
 
 
-class TestCreateVersion(IsolatedAsyncioTestCase):
+class TestReadLatestVersion(IsolatedAsyncioTestCase):
     def setUp(self):
-        DatabaseManager.create_table()
+        DatabaseManager.create_tables()
 
     def tearDown(self):
-        DatabaseManager.drop_table()
+        DatabaseManager.drop_tables()
 
-    async def test_create_version(self):
-        product_name = "test"
-        major = 1
-        minor = 1
-        patch = 1
-        expected_result = {
-            "major": 1,
-            "minor": 1,
-            "patch": 1,
-            "product_name": "test",
-            "id": 1,
-        }
-        result = await create_version(product_name, major, minor, patch)
-        self.assertDictEqual(result, expected_result)
+    async def test_read_latest_version(self):
+        data = ApplicationAndVersionNameModel(product_name="test", version="1.1.1")
+        expected_result = ApplicationAndVersionResponseModel(
+            **{
+                "major": 1,
+                "minor": 1,
+                "patch": 1,
+                "product_name": "test",
+                "id": 1,
+            }
+        )
+        result = await CreateVersion().execute(data=data)
+        self.assertTrue(result == expected_result)
