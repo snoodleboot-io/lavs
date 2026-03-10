@@ -11,9 +11,7 @@ class DatabaseManager:
         """Create the tables for the database."""
 
         with ConnectionFactory().retrieve(key="duckdb") as conn:
-            with open(
-                os.path.join(os.path.dirname(__file__), "duckdb/ddl.sql"), "r"
-            ) as stream:
+            with open(os.path.join(os.path.dirname(__file__), "duckdb/ddl.sql")) as stream:
                 query = "".join(stream.readlines())
 
             conn.execute(query=query)
@@ -31,6 +29,4 @@ class DatabaseManager:
 
             conn.execute(query="DROP SEQUENCE IF EXISTS version_id_seq")
 
-            assert (
-                "Versions" not in conn.execute("SHOW ALL TABLES").fetchdf().name.values
-            )
+            assert "Versions" not in conn.execute("SHOW ALL TABLES").fetchdf().name.values

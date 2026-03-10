@@ -1,14 +1,9 @@
 import logging
 
 import uvicorn
-
 from fastapi import FastAPI
 
-from app.models.requests.request_model import RequestModel
-from app.routers import patch
-from app.routers import basic_crud
-from app.routers import versions
-
+from app.routers import basic_crud, patch, versions
 
 app = FastAPI()
 logger = logging.getLogger("lavs-api")

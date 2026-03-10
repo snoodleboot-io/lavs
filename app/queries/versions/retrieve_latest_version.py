@@ -1,7 +1,6 @@
-from typing import Dict, Any, Union
+from typing import Any
 
 from app.models.requests.application_name_model import ApplicationNameModel
-from app.models.requests.request_model import RequestModel
 from app.models.respones.applciation_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
@@ -18,7 +17,7 @@ class RetrieveLatestVersion(Query):
 
     async def apply(
         self, data: ApplicationNameModel, conn: Any
-    ) -> Union[ApplicationAndVersionResponseModel, ResponseModel]:
+    ) -> ApplicationAndVersionResponseModel | ResponseModel:
         """Retrieve the latest version of a product.
 
         Args:

@@ -1,5 +1,6 @@
 import contextlib
 import os
+from collections.abc import Generator
 
 import duckdb
 
@@ -9,16 +10,12 @@ from app.connections.connection import Connection
 
 
 class DuckDBConnection(Connection):
-
-    @property
     @contextlib.contextmanager
-    def connection(self):
+    def connection(self) -> Generator[object]:
         """Generates and 'yields' a live DuckDB connection."""
         connection = None
         try:
-            connection = duckdb.connect(
-                os.path.join(root_dir(), Configuration().database_name)
-            )
+            connection = duckdb.connect(os.path.join(root_dir(), Configuration().database_name))
             yield connection
         finally:
             if connection:

@@ -3,7 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from app.models.requests.application_name_model import ApplicationNameModel
-from app.models.respones.applciation_and_version_response_model import ApplicationAndVersionResponseModel
+from app.models.respones.applciation_and_version_response_model import (
+    ApplicationAndVersionResponseModel,
+)
 from app.models.respones.patch_response_model import PatchResponseModel
 from app.queries.patch_version.create_patch import CreatePatch
 from app.queries.patch_version.read_current_patch import ReadCurrentPatch

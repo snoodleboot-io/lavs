@@ -1,10 +1,9 @@
-from typing import Any, List
+from typing import Any
 
 from app.models.requests.request_model import RequestModel
 from app.models.respones.applciation_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
-from app.models.respones.response_model import ResponseModel
 from app.queries.query import Query
 
 
@@ -17,7 +16,7 @@ class RetrieveAll(Query):
 
     async def apply(
         self, data: RequestModel, conn: Any
-    ) -> List[ApplicationAndVersionResponseModel]:
+    ) -> list[ApplicationAndVersionResponseModel]:
         """Queries all versions of all products.
 
         Args:
@@ -25,9 +24,7 @@ class RetrieveAll(Query):
             conn: Live database connection.
         """
         result = (
-            conn.sql(
-                f"SELECT * FROM Versions WHERE ORDER BY major DESC, minor DESC, patch DESC"
-            )
+            conn.sql("SELECT * FROM Versions WHERE ORDER BY major DESC, minor DESC, patch DESC")
             .fetchdf()
             .to_dict("records")
         )

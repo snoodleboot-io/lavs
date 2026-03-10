@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query, Body
+from fastapi import APIRouter, Query
 
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
