@@ -37,8 +37,8 @@ class DeleteVersion(Query):
                 }"
             )
         )
-        result: ApplicationAndVersionResponseModel = (
-            await self._latest_version_query.execute(data=data)
+        result: ApplicationAndVersionResponseModel = await self._latest_version_query.execute(
+            data=data
         )
 
         self._logger.info(result)

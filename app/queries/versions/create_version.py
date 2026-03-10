@@ -6,7 +6,6 @@ from app.models.requests.application_and_version_model import (
 from app.models.respones.applciation_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
-from app.models.respones.response_model import ResponseModel
 from app.queries.query import Query
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
@@ -35,8 +34,8 @@ class CreateVersion(Query):
                 f"VALUES ({data.major}, {data.minor}, {data.patch}, '{data.product_name}', nextval('version_id_seq'))"
             )
         )
-        result: ApplicationAndVersionResponseModel = (
-            await self._latest_version_query.execute(data=data)
+        result: ApplicationAndVersionResponseModel = await self._latest_version_query.execute(
+            data=data
         )
         self._logger.info(result)
         return result
