@@ -3,7 +3,7 @@ from typing import Any
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
 from app.queries.query import Query
@@ -29,10 +29,11 @@ class CreateVersion(Query):
         """
         _ = conn.sql(
             query=(
-                f"INSERT INTO Versions "
-                f"(major, minor, patch, product_name, id) "
-                f"VALUES ({data.major}, {data.minor}, {data.patch}, '{data.product_name}', nextval('version_id_seq'))"
-            )
+                "INSERT INTO Versions "
+                "(major, minor, patch, product_name, id) "
+                "VALUES (?, ?, ?, ?, nextval('version_id_seq'))"
+            ),
+            params=(data.major, data.minor, data.patch, data.product_name),
         )
         result: ApplicationAndVersionResponseModel = await self._latest_version_query.execute(
             data=data

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from app.models.requests.application_name_model import ApplicationNameModel
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
 from app.queries.crud.retrieve_all import RetrieveAll

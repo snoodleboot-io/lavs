@@ -1,7 +1,7 @@
 from typing import Any
 
 from app.models.requests.application_name_model import ApplicationNameModel
-from app.models.respones.patch_response_model import PatchResponseModel
+from app.models.responses.patch_response_model import PatchResponseModel
 from app.queries.query import Query
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
@@ -21,7 +21,14 @@ class ReadCurrentPatch(Query):
             data: Product name.
             conn: Live database connection.
         """
-        latest_version_result: PatchResponseModel = await self._latest_version_query.execute(
-            data=data
+        latest_version_result = await self._latest_version_query.execute(data=data)
+        if latest_version_result is None:
+            raise ValueError(
+                f"No version found for product '{data.product_name}'. "
+                "Create a base version first using POST /versions/"
+            )
+        return PatchResponseModel(
+            product_name=latest_version_result.product_name,
+            patch=latest_version_result.patch,
+            id=latest_version_result.id,
         )
-        return latest_version_result

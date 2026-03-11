@@ -3,7 +3,7 @@ from typing import Annotated
 from annotated_types import Ge
 from pydantic import computed_field
 
-from app.models.respones.response_model import ResponseModel
+from app.models.responses.response_model import ResponseModel
 
 
 class ApplicationAndVersionResponseModel(ResponseModel):

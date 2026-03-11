@@ -3,7 +3,7 @@ from typing import Any
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
 from app.queries.query import Query
@@ -27,9 +27,13 @@ class CreatePatch(Query):
             data: Product name and version.
             conn: Live database connection.
         """
-        latest_version_result: ApplicationAndVersionResponseModel = (
-            await self._latest_version_query.execute(data=data)
-        )
+        latest_version_result = await self._latest_version_query.execute(data=data)
+
+        if latest_version_result is None:
+            raise ValueError(
+                f"No version found for product '{data.product_name}'. "
+                "Create a base version first using POST /versions/"
+            )
 
         conn.sql(
             query=(

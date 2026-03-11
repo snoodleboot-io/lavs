@@ -16,17 +16,28 @@ class DatabaseManager:
 
             conn.execute(query=query)
 
-            _ = conn.execute("SELECT COUNT(*) as COUNT FROM Versions").fetchdf()
+            result = conn.execute("SELECT COUNT(*) as COUNT FROM Versions").fetchall()
+            _ = result  # Verify query executes without error
 
-            assert "Versions" in conn.execute("SHOW ALL TABLES").fetchdf().name.values
+            table_result = conn.execute("SHOW ALL TABLES").fetchall()
+            # Description: [('database',), ('schema',), ('name',), ...]
+            # So name is at index 2
+            table_names = [row[2] for row in table_result]
+            assert "Versions" in table_names
 
     @classmethod
     def drop_tables(cls):
         """Drop all tables."""
         with ConnectionFactory().retrieve(key="duckdb") as conn:
-            if "Versions" in conn.execute("SHOW ALL TABLES").fetchdf().name.values:
+            table_result = conn.execute("SHOW ALL TABLES").fetchall()
+            # Description: [('database',), ('schema',), ('name',), ...]
+            # So name is at index 2
+            table_names = [row[2] for row in table_result]
+            if "Versions" in table_names:
                 conn.execute(query="DROP TABLE Versions")
 
             conn.execute(query="DROP SEQUENCE IF EXISTS version_id_seq")
 
-            assert "Versions" not in conn.execute("SHOW ALL TABLES").fetchdf().name.values
+            table_result = conn.execute("SHOW ALL TABLES").fetchall()
+            table_names = [row[2] for row in table_result]
+            assert "Versions" not in table_names

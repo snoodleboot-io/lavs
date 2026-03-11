@@ -4,7 +4,7 @@ from app.database.database_manager import DatabaseManager
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
 from app.queries.patch_version.create_patch import CreatePatch
