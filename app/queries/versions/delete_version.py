@@ -3,10 +3,7 @@ from typing import Any
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
-from app.models.respones.applciation_and_version_response_model import (
-    ApplicationAndVersionResponseModel,
-)
-from app.models.respones.response_model import ResponseModel
+from app.models.responses.response_model import ResponseModel
 from app.queries.query import Query
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
 
@@ -18,9 +15,7 @@ class DeleteVersion(Query):
         super().__init__()
         self._latest_version_query = RetrieveLatestVersion()
 
-    async def apply(
-        self, data: ApplicationAndVersionNameModel, conn: Any
-    ) -> ApplicationAndVersionResponseModel | ResponseModel:
+    async def apply(self, data: ApplicationAndVersionNameModel, conn: Any) -> ResponseModel:
         """Delete a version from the database given the product name and its version.
 
         Args:
@@ -29,17 +24,13 @@ class DeleteVersion(Query):
         """
         _ = conn.sql(
             query=(
-                f"DELETE FROM Versions "
-                f"WHERE product_name='{data.product_name}' "
-                f"AND major={data.major} "
-                f"AND minor={data.minor} "
-                f"AND patch={data.patch
-                }"
-            )
-        )
-        result: ApplicationAndVersionResponseModel = await self._latest_version_query.execute(
-            data=data
+                "DELETE FROM Versions "
+                "WHERE product_name=? "
+                "AND major=? "
+                "AND minor=? "
+                "AND patch=?"
+            ),
+            params=(data.product_name, data.major, data.minor, data.patch),
         )
 
-        self._logger.info(result)
-        return result
+        return ResponseModel()

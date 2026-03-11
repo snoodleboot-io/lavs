@@ -6,10 +6,10 @@ from typing import Any, Generic
 from app.configurations.configuration import Configuration
 from app.connections.connection_factory import ConnectionFactory
 from app.models.requests.request_model import RequestModel
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
-from app.models.respones.patch_response_model import PatchResponseModel
+from app.models.responses.patch_response_model import PatchResponseModel
 
 T = typing.TypeVar(
     "T",

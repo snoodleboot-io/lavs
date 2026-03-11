@@ -4,10 +4,9 @@ from app.database.database_manager import DatabaseManager
 from app.models.requests.application_and_version_model import (
     ApplicationAndVersionNameModel,
 )
-from app.models.respones.applciation_and_version_response_model import (
+from app.models.responses.application_and_version_response_model import (
     ApplicationAndVersionResponseModel,
 )
-from app.models.respones.response_model import ResponseModel
 from app.queries.versions.create_version import CreateVersion
 from app.queries.versions.delete_version import DeleteVersion
 from app.queries.versions.retrieve_latest_version import RetrieveLatestVersion
@@ -35,5 +34,4 @@ class TestDeleteVersion(IsolatedAsyncioTestCase):
         self.assertTrue(result == expected_result)
         await DeleteVersion().execute(data=data)
         result = await RetrieveLatestVersion().execute(data=data)
-        self.assertIsInstance(result, ResponseModel)
-        self.assertTrue(result == ResponseModel())
+        self.assertIsNone(result)
